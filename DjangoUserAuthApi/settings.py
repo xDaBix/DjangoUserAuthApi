@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'UsersDetails',
+    'UsersDetails.apps.UsersdetailsConfig',
     
 ]
 
@@ -62,7 +62,7 @@ ROOT_URLCONF = 'DjangoUserAuthApi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
