@@ -3,16 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eaf2ff; /* Light blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #d1e7fd; /* Light blue border */
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a; /* Dark blue title */
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+            color: #1e3a8a; /* Dark blue for labels */
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #a5b4fc; /* Lighter blue border */
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #f0f9ff; /* Light blue background for inputs */
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue border on focus */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3b82f6; /* Blue button */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: -12px;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #3b82f6; /* Blue color for footer link */
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <form action="{% url 'register' %}" method="post">
-        {% csrf_token %}
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">Register</button>
+
+    <div class="form-container">
+        <h2>Register</h2>
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                
+                <p class="error-message">{% if form.email.errors %}{{ form.email.errors }}{% endif %}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Choose a strong password" required>
+                
+                <p class="error-message">{% if form.password.errors %}{{ form.password.errors }}{% endif %}</p>
+            </div>
+            
+            <button type="submit">Register</button>
         </form>
+        
+        <div class="footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
+
 </body>
 </html>

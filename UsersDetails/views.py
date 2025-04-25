@@ -6,20 +6,16 @@ from django.contrib.auth.hashers import make_password,check_password
 
 
 
-# def register_user(request):
-#     if request.method == 'POST':
-#         form = UserDetailsForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponse("User registered successfully")
-#     else:
-#         form = UserDetailsForm()
-#     return render(request, 'UsersDetails/register.html', {'form': form})
+
 
 def register_user(request):
     if request.method == 'POST':
         email=request.POST.get('email')
         password=request.POST.get('password')
+
+        if user_collection.find_one({'email':email}):
+            return HttpResponse("User already exists")
+        
 
         user={
             'email':email,
@@ -29,16 +25,32 @@ def register_user(request):
         return HttpResponse("User registered successfully")
     return render(request, 'UsersDetails/register.html')
 
-# def login_user(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-#         try:
-#             user = UserDetails.objects.get(email=email)
-#             if check_password(password, user.password):
-#                 return HttpResponse("Login successful")
-#             else:
-#                 return HttpResponse("Invalid credentials")
-#         except UserDetails.DoesNotExist:
-#             return HttpResponse("User does not exist")
-#     return render(request, 'UsersDetails/login.html')
+
+
+def login_user(request):
+    if request.method=='POST':
+        email=request.POST.get('email')
+        password=request.POST.get('password')
+        user=user_collection.find_one({'email':email})
+        if user:
+            if check_password(password,user['password']):
+                return HttpResponse("Login successful")
+            else:
+                return HttpResponse("Invalid password")
+        else:
+            return HttpResponse("User not found")
+    return render(request, 'UsersDetails/login.html')
+
+
+
+def reset_password(request):
+    if request.method=='POST':
+        email=request.POST.get('email')
+        new_password=request.POST.get('new_password')
+        user=user_collection.find_one({'email':email})
+        if user:
+            user_collection.update_one({'email':email},{'$set':{'password':make_password(new_password)}})
+            return HttpResponse("Password reset successful")
+        else:
+            return HttpResponse("User not found")
+    return render(request, 'UsersDetails/reset_password.html')
