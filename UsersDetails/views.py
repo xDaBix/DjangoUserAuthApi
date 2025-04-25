@@ -57,14 +57,21 @@ def login_user(request):
 def reset_password(request):
     if request.method=='POST':
         email=request.POST.get('email')
-        new_password=request.POST.get('new_password')
-        user=user_collection.find_one({'email':email})
-        if user:
-            user_collection.update_one({'email':email},{'$set':{'password':make_password(new_password)}})
-            return HttpResponse("Password reset successful")
+        if user_collection.find_one({'email': email}):
+            otp = randint(10000, 99999)
+            send_mail(
+                'your otp', 
+                f'Your OTP is {otp}', 
+                settings.EMAIL_HOST_USER, 
+                [email], fail_silently=False)
+
+            request.session['otp'] = otp
+            request.session['email'] = email
+            return redirect('forgototp')
         else:
-            return HttpResponse("User not found")
-    return render(request, 'UsersDetails/reset_password.html')
+            messages.error(request, "Email not registered. Please register first.")
+            return redirect('register')
+    return render(request, 'UsersDetails/resetpassword.html')
 
 
 def verify_otp(request):
@@ -101,5 +108,41 @@ def verify_otp(request):
             messages.error(request, "Invalid OTP. Please try again.")
             return redirect('verifyotp')  
 
-    #
+    
     return render(request, 'UsersDetails/verifyotp.html')
+
+
+def forgot_otp(request):
+    if request.method == 'POST':
+        otp = request.POST.get('otp1') + request.POST.get('otp2') + request.POST.get('otp3') + request.POST.get('otp4') + request.POST.get('otp5')
+       
+        
+        if otp == str(request.session.get('otp')):
+            
+            return redirect('changepassword')  
+
+        else:
+            messages.error(request, "Invalid OTP. Please try again.")
+            return redirect('forgototp')  
+
+    
+    return render(request, 'UsersDetails/forgototp.html')
+
+
+def changepassword(request):
+    if request.method == 'POST':
+        email = request.session.get('email')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        
+        if new_password == confirm_password:
+            user_collection.update_one({'email': email}, {'$set': {'password': make_password(new_password)}})
+            messages.success(request, "Password changed successfully!")
+            return redirect('login')  
+        else:
+            messages.error(request, "Passwords do not match. Please try again.")
+            return redirect('changepassword')  
+
+    
+    return render(request, 'UsersDetails/changepassword.html')

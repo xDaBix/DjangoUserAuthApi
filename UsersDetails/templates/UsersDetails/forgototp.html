@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@100;400;600&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'player/css/verifyotp.css' %}">
+    {% comment %} <script src="{% static 'player/js/verifyotp.js' %}" defer></script> {% endcomment %}
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Urbanist', sans-serif;
+            background-color: #eaf2ff; /* Light blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #d1e7fd; /* Light blue border */
+        }
+
+        h1.title {
+            text-align: center;
+            color: #1e3a8a; /* Dark blue title */
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            text-align: center;
+            margin: 5px;
+            border: 1px solid #a5b4fc; /* Lighter blue border */
+            border-radius: 4px;
+            background-color: #f0f9ff; /* Light blue background for inputs */
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #3b82f6; /* Blue border on focus */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3b82f6; /* Blue button */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+        }
+
+        .home-link {
+            position: absolute;
+            top: 20px; 
+            left: 20px; 
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .home-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="{% url 'login' %}" class="home-link">Back</a>
+
+    <section>
+        <div class="container">
+            <h1 class="title">Enter OTP</h1>
+
+            
+            {% if error_message %}
+                <p class="error-message">{{ error_message }}</p>
+            {% endif %}
+
+            <form method="POST" action="{% url 'forgototp' %}" id="otpForm">
+                {% csrf_token %}
+                
+                <div id="otp-form" style="display: flex; justify-content: space-between; padding-bottom: 20px;">
+                    <input type="text" class="otp-input" name="otp1" maxlength="1" required>
+                    <input type="text" class="otp-input" name="otp2" maxlength="1" required>
+                    <input type="text" class="otp-input" name="otp3" maxlength="1" required>
+                    <input type="text" class="otp-input" name="otp4" maxlength="1" required>
+                    <input type="text" class="otp-input" name="otp5" maxlength="1" required>
+                </div>
+
+                <button type="submit" id="verify-btn">Verify OTP</button>
+            </form>
+        </div>
+    </section>
+
+    {% if messages %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const messages = [
+                    {% for message in messages %}
+                        "{{ message|escapejs }}",
+                    {% endfor %}
+                ].filter(Boolean); 
+
+                if (messages.length) {
+                    alert(messages.join('\n')); 
+                }
+            });
+        </script>
+    {% endif %}
+</body>
+</html>
