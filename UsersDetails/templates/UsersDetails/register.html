@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #eaf2ff; /* Light blue background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .form-container {
+    
+        <style>
+            /* General Styles */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #eaf2ff; /* Light blue background */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+            }
+    .form-container {
             background-color: white;
             padding: 30px;
             border-radius: 8px;
@@ -25,20 +25,20 @@
             max-width: 400px;
             border: 1px solid #d1e7fd; /* Light blue border */
         }
-
+    
         h2 {
             text-align: center;
             color: #1e3a8a; /* Dark blue title */
             margin-bottom: 20px;
         }
-
+    
         label {
             font-size: 14px;
             margin-bottom: 5px;
             display: block;
             color: #1e3a8a; /* Dark blue for labels */
         }
-
+    
         input[type="email"],
         input[type="password"] {
             width: 100%;
@@ -49,13 +49,13 @@
             margin-bottom: 15px;
             background-color: #f0f9ff; /* Light blue background for inputs */
         }
-
+    
         input[type="email"]:focus,
         input[type="password"]:focus {
             outline: none;
             border-color: #3b82f6; /* Blue border on focus */
         }
-
+    
         button {
             width: 100%;
             padding: 12px;
@@ -67,30 +67,70 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
+    
         button:hover {
             background-color: #2563eb; /* Darker blue on hover */
         }
-
+    
         .error-message {
             color: red;
             font-size: 12px;
             margin-top: -12px;
             margin-bottom: 15px;
         }
-
+    
         .footer {
             text-align: center;
             margin-top: 20px;
         }
-
+    
         .footer a {
             color: #3b82f6; /* Blue color for footer link */
             text-decoration: none;
         }
-
+    
         .footer a:hover {
             text-decoration: underline;
+        }
+    
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .messages li.success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .messages li.info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        .messages li.warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        .messages li.error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .error-message {
+            color: #b91c1c;
+            font-size: 12px;
+            margin-top: -12px;
+            margin-bottom: 15px;
+            display: block;
+            min-height: 1em;
         }
     </style>
 </head>
@@ -98,26 +138,33 @@
 
     <div class="form-container">
         <h2>Register</h2>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         <form action="{% url 'register' %}" method="post">
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                
-                <p class="error-message">{% if form.email.errors %}{{ form.email.errors }}{% endif %}</p>
+                <input type="email" id="email" name="email" placeholder="Enter your email" value="{{ email|default:'' }}" required>
+                <p class="error-message"></p>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" placeholder="Choose a strong password" required>
-                
-                <p class="error-message">{% if form.password.errors %}{{ form.password.errors }}{% endif %}</p>
+                <p class="error-message"></p>
             </div>
-            
+
             <button type="submit">Register</button>
         </form>
-        
+
         <div class="footer">
             <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
         </div>
